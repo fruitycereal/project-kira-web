@@ -1,0 +1,382 @@
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+@import url('https://fonts.cdnfonts.com/css/antro-vectra');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: black;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ==========================================================================
+   Global Single Page Layer Controller
+   ========================================================================== */
+.page {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+  z-index: 10;
+}
+
+/* display: block hooks the layout layer */
+.page.active {
+  display: block;
+}
+
+/* visible toggles opacity transitions safely */
+.page.visible {
+  opacity: 1;
+}
+
+/* Set standard custom typography variables */
+.page, .page * {
+  font-family: 'DeathFont', serif;
+}
+
+/* ==========================================================================
+   Cinematic Overlay Components (Video and Screen Overlays)
+   ========================================================================== */
+#intro-video {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50; /* Sits over workspace layouts, below the system dark flash overlay */
+  transition: opacity 0.8s ease;
+  background: black;
+}
+
+#black-screen {
+  position: fixed;
+  inset: 0;
+  background: black;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 60; /* Top tier layout level to generate clean blackout blinks */
+  transition: opacity 0.8s ease;
+}
+
+/* ==========================================================================
+   Section 1: Enter Page Layout
+   ========================================================================== */
+#enter-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background-image: url(wings.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.enter-page-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  position: absolute;
+  inset: 0;
+  padding-bottom: 12vh;
+}
+
+#enter-btn {
+  position: relative;
+  z-index: 12;
+  border: 0.12vw solid #D9D9D9;
+  background-color: #D9D9D9;
+  color: #000;
+  font-size: clamp(16px, 1.4vw, 24px);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  padding: clamp(8px, 0.8vw, 14px) clamp(28px, 4vw, 50px);
+  cursor: pointer;
+  min-width: clamp(140px, 18vw, 240px);
+  text-align: center;
+}
+
+#enter-btn:hover {
+  color: #D9D9D9;
+  background-color: transparent;
+}
+
+/* ==========================================================================
+   Section 2: Rules Component
+   ========================================================================== */
+#rules-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background-image: url(rules1.png);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: black;
+}
+
+/* ==========================================================================
+   Section 3: Name Entry Panel
+   ========================================================================== */
+#entername-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background-image: url(deliver3.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.entername-page-inner {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+#nameBox {
+  position: absolute;
+  left: 50%;
+  top: 68%;
+  transform: translateX(-50%);
+  z-index: 12;
+  background: transparent;
+  border: none;
+  border-bottom: 0.15vw solid #fff;
+  color: #e74242;
+  font-family: 'MedievalSharp', serif;
+  font-size: clamp(16px, 1.5vw, 24px);
+  text-align: center;
+  padding: 0.5em 0;
+  width: min(60vw, 580px);
+  outline: none;
+  animation: blink 1.7s ease-in-out infinite;
+}
+
+#name-submit-btn {
+  position: absolute;
+  left: 50%;
+  top: 79%;
+  transform: translateX(-50%);
+  z-index: 12;
+  background: #D9D9D9;
+  border: 0.12vw solid #D9D9D9;
+  color: #000;
+  font-size: clamp(16px, 1.4vw, 24px);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  padding: clamp(8px, 0.8vw, 14px) clamp(28px, 4vw, 50px);
+  cursor: pointer;
+  min-width: clamp(140px, 18vw, 240px);
+  text-align: center;
+}
+
+#name-submit-btn:hover {
+  color: #D9D9D9;
+  background-color: transparent;
+}
+
+@keyframes blink {
+  0%, 100% { border-bottom-color: #fff; }
+  50% { border-bottom-color: transparent; }
+}
+
+/* ==========================================================================
+   Section 4: Cinematic Notebook Writing Phase
+   ========================================================================== */
+#writename-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+#page-writename.visible #writename-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('paper1.png');
+  background-size: cover;
+  background-position: center;
+  animation: zoomPaper 4s forwards;
+  z-index: 1;
+}
+
+@keyframes zoomPaper {
+  from { transform: scale(1); transform-origin: left top; }
+  to { transform: scale(2); transform-origin: left top; }
+}
+
+#writing-area {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+#writename-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(3rem, 8vw, 7.5rem);
+  color: black;
+  font-family: 'Antro Vectra', sans-serif;
+  margin: 0;
+  white-space: nowrap;
+  line-height: 1;
+  z-index: 3;
+}
+
+#pencil {
+  position: fixed;
+  width: clamp(140px, 18vw, 320px);
+  height: auto;
+  opacity: 0;
+  z-index: 4;
+  pointer-events: none;
+  transition: left 0.08s linear, top 0.08s linear, opacity 0.3s ease;
+}
+
+/* ==========================================================================
+   Section 5: Target Death Specifications Card
+   ========================================================================== */
+#end1-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4vh 4vw;
+  text-align: center;
+  gap: 2vh;
+}
+
+#end1-name,
+#end1-details,
+#end1-justice {
+  opacity: 0;
+  transition: opacity 1s ease;
+  line-height: 1.4;
+  color: white;
+}
+
+#end1-name {
+  font-size: clamp(2rem, 4vw, 4rem);
+}
+
+#end1-details {
+  font-size: clamp(1.1rem, 2vw, 2rem);
+}
+
+#end1-details p {
+  margin: 0.35em 0;
+}
+
+#end1-status {
+  color: #AA1313;
+}
+
+#end1-justice {
+  margin-top: 4vh;
+  color: #AA1313;
+  font-size: clamp(1.6rem, 3vw, 3rem);
+}
+
+/* ==========================================================================
+   Section 6: Archival Database Output Panel
+   ========================================================================== */
+#end2-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3vh;
+  padding: 4vh 4vw;
+}
+
+#archive-box {
+  width: min(90vw, 700px);
+  height: min(68vh, 520px);
+  border: 1px solid white;
+  padding: clamp(16px, 2vw, 25px);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  color: white;
+}
+
+#archive-box h1 {
+  font-size: clamp(1.4rem, 2.4vw, 2.4rem);
+  margin-bottom: 2vh;
+  flex-shrink: 0;
+}
+
+#records-container {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #333;
+  padding: clamp(10px, 1.5vw, 16px);
+  min-height: 0;
+}
+
+#archive-list {
+  line-height: 1.9;
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+}
+
+#total-records {
+  color: #c11616;
+  text-align: right;
+  margin-top: 1.5vh;
+  flex-shrink: 0;
+  font-size: clamp(0.95rem, 1.3vw, 1.2rem);
+}
+
+#records-container::-webkit-scrollbar {
+  width: 0.5rem;
+}
+#records-container::-webkit-scrollbar-track {
+  background: #111;
+}
+#records-container::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 999px;
+}
+#records-container::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+#rewrite-btn {
+  width: min(50vw, 220px);
+  min-width: 140px;
+  font-size: clamp(1rem, 1.6vw, 1.5rem);
+  border: 2px solid #D9D9D9;
+  background-color: #D9D9D9;
+  color: #000;
+  font-weight: 500;
+  padding: clamp(10px, 1vh, 14px) clamp(18px, 2vw, 24px);
+  cursor: pointer;
+  letter-spacing: 0.2em;
+}
+
+#rewrite-btn:hover {
+  color: #D9D9D9;
+  background-color: transparent;
+}

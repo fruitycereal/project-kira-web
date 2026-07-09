@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kira</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="icon2.png" type="image/png">
+</head>
+<body>
+  <!-- Global Audio & Cinematic Layout Assets -->
+  <audio id="bg-music" src="kyrie.mp3" loop></audio>
+  <video id="intro-video" src="kill2.mov" preload="auto"></video>
+  <div id="black-screen"></div>
+  
+  <!-- Section 1: Enter Page -->
+  <section id="page-enter" class="page active visible">
+    <div id="enter-wrapper">
+      <div class="enter-page-inner">
+        <button id="enter-btn"> ENTER </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Rules Display Panel -->
+  <section id="page-rules" class="page">
+    <div id="rules-wrapper"></div>
+  </section>
+
+  <!-- Section 3: Name Form Entry -->
+  <section id="page-entername" class="page">
+    <div id="entername-wrapper">
+      <div class="entername-page-inner">
+        <input id="nameBox" type="text" placeholder=" " autocomplete="off" maxlength="17">
+        <button id="name-submit-btn">SEND</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Cinematic Pen Writing Workspace -->
+  <section id="page-writename" class="page">
+    <div id="writename-wrapper">
+      <div id="writing-area">
+        <h1 id="writename-text"></h1>
+        <img id="pencil" src="pencil.png" alt="Writing instrument" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Individual Record Summary -->
+  <section id="page-end1" class="page">
+    <div id="end1-container">
+      <p id="end1-name"></p>
+      <br>
+      <div id="end1-details">
+        <p id="end1-time"></p>
+        <p> Status: <span id="end1-status"> DECEASED </span></p>
+        <p> Cause: Heart attack</p>
+      </div>
+      <p id="end1-justice"> Justice has been served. </p>
+    </div>
+  </section>
+
+  <!-- Section 6: System History Ledger -->
+  <section id="page-end2" class="page">
+    <div id="end2-container">
+      <div id="archive-box">
+        <h1> ARCHIVE RECORDS </h1>
+        <div id="records-container">
+          <div id="archive-list"></div>
+        </div>
+        <p id="total-records"></p>
+      </div>
+      <button id="rewrite-btn"> REWRITE </button>
+    </div>
+  </section>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
