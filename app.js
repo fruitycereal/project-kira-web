@@ -92,6 +92,7 @@ async function finishSequence(name) {
   const pencil = document.getElementById("pencil");
   const black = document.getElementById("black-screen");
   const video = document.getElementById("intro-video");
+  video.volume = 0.75; // 0.0 (silent) to 1.0 (full volume) — adjust to taste
 
   if (name.trim()) {
     saveName(name).catch(err => console.error("Background save failed:", err));
