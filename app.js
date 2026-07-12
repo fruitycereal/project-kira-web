@@ -85,36 +85,33 @@ async function finishSequence(name) {
       pencil.style.opacity = "0";
 
       const writePage = document.getElementById("page-writename");
-      writePage.classList.remove("visible", "active");
 
       video.classList.add("active-play");
       video.currentTime = 0;
-      video.muted = false;
 
       const music = document.getElementById("bg-music");
       if (music) music.volume = 0.17;
 
-      setTimeout(() => {
-        console.log("About to play video");
+      console.log("About to play video");
 
-        video.play()
-          .then(() => {
-            console.log("Video started");
+      video.play()
+        .then(() => {
+          console.log("Video started");
 
-            // Fade the black screen away
-            setTimeout(() => {
-              black.style.opacity = "0";
-            }, 300);
+          // Only hide the writing page AFTER the video is actually playing
+          writePage.classList.remove("visible", "active");
 
-            if (music && music.paused) {
-              music.play().catch(() => {});
-            }
-          })
-          .catch(err => {
-            console.error("Video failed:", err);
-          });
+          setTimeout(() => {
+            black.style.opacity = "0";
+          }, 300);
 
-      }, 50);
+          if (music && music.paused) {
+            music.play().catch(() => {});
+          }
+        })
+        .catch(err => {
+          console.error("Video failed:", err);
+        });
 
       video.addEventListener("ended", () => {
         video.classList.remove("active-play");
