@@ -103,20 +103,16 @@ async function finishSequence(name) {
       video.play()
         .then(() => {
           console.log("Video started");
-
-          // Only hide the writing page AFTER the video is actually playing
           writePage.classList.remove("visible", "active");
-
-          setTimeout(() => {
-            black.style.opacity = "0";
-          }, 300);
-
-          if (music && music.paused) {
-            music.play().catch(() => {});
-          }
+          setTimeout(() => { black.style.opacity = "0"; }, 300);
+          if (music && music.paused) music.play().catch(() => {});
         })
         .catch(err => {
           console.error("Video failed:", err);
+          // TEMP: show the error directly on screen for mobile debugging
+          document.body.insertAdjacentHTML("beforeend",
+            `<div style="position:fixed;top:0;left:0;right:0;background:red;color:white;padding:10px;z-index:99999;font-size:14px;word-break:break-all;">VIDEO ERROR: ${err.name} - ${err.message}</div>`
+          );
         });
 
       video.addEventListener("ended", () => {
