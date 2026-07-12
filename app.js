@@ -20,7 +20,6 @@ function showPage(id) {
   pages.forEach(page => {
     if (page.id === id) {
       page.classList.add("active");
-      // Yield processing cycles so browser processes layout display switches smoothly
       setTimeout(() => page.classList.add("visible"), 20);
     } else {
       page.classList.remove("visible");
@@ -32,7 +31,6 @@ function showPage(id) {
     }
   });
 
-  // Dynamically kick off unique processes depending on route visibility
   if (id === "page-end1") {
     initEnd1Page();
   } else if (id === "page-end2") {
@@ -68,13 +66,63 @@ document.getElementById("name-submit-btn").addEventListener("click", () => {
   runWritingSequence(nameInput);
 });
 
-// Section 4 Animation Runner Sequence
+// Separate, clean function to handle the cinematic transition safely
+async function finishSequence(name) {
+  const pencil = document.getElementById("pencil");
+  const black = document.getElementById("black-screen");
+  const video = document.getElementById("intro-video");
+
+  if (name.trim()) {
+    await saveName(name);
+  }
+
+  setTimeout(() => {
+    // 1. Screen blinks completely black
+    black.style.opacity = "1";
+
+    setTimeout(() => {
+      pencil.style.opacity = "0";
+      
+      // 2. Hide the writing workspace layout
+      const writePage = document.getElementById("page-writename");
+      writePage.classList.remove("visible", "active");
+      
+      // 3. Unhide the video element BEFORE playing it (fixes iPad premature ending)
+      video.style.display = "block";
+      video.style.opacity = "1";
+      video.muted = true; // Keeps mobile engines happy
+
+      // Ensure background music volume doesn't drop out completely
+      const music = document.getElementById("bg-music");
+      if (music) music.volume = 0.17; 
+
+      // Give the browser 50ms to register the video layout display change
+      setTimeout(() => {
+        video.play()
+          .then(() => {
+            if (music && music.paused) music.play().catch(() => {});
+          })
+          .catch(err => console.log("Playback engine paused action:", err));
+      }, 50);
+
+      video.addEventListener("ended", () => {
+        video.style.opacity = "0";
+        
+        setTimeout(() => {
+          video.style.display = "none";
+        }, 800);
+
+        showPage("page-end1");
+      }, { once: true });
+
+    }, 800);
+  }, 1700);
+}
+
 // Section 4 Animation Runner Sequence
 function runWritingSequence(name) {
   const nameElement = document.getElementById("writename-text");
   const pencil = document.getElementById("pencil");
-  const black = document.getElementById("black-screen");
-  const video = document.getElementById("intro-video");
 
   nameElement.textContent = "";
   pencil.style.opacity = "0";
@@ -83,7 +131,6 @@ function runWritingSequence(name) {
     const rect = nameElement.getBoundingClientRect();
     const pencilRect = pencil.getBoundingClientRect();
 
-    // FIXED: Protect absolute calculations from collapsing on small mobile frames
     const pencilX = rect.right - pencilRect.width * 0.12;
     const pencilY = rect.top + rect.height * 0.42 - pencilRect.height * 0.58;
 
@@ -98,7 +145,7 @@ function runWritingSequence(name) {
     const typing = setInterval(() => {
       if (index >= name.length) {
         clearInterval(typing);
-        finishSequence();
+        finishSequence(name); // Call the clean, external function
         return;
       }
 
@@ -106,55 +153,6 @@ function runWritingSequence(name) {
       index++;
       movePencil();
     }, 50);
-
-    async function finishSequence() {
-      if (name.trim()) {
-        await saveName(name);
-      }
-
-      setTimeout(() => {
-        // 1. Screen blinks completely black
-        black.style.opacity = "1";
-
-        setTimeout(() => {
-          pencil.style.opacity = "0";
-          
-          // 2. Hide the writing workspace layout
-          const writePage = document.getElementById("page-writename");
-          writePage.classList.remove("visible", "active");
-          
-          // 3. Unhide the video element BEFORE playing it (fixes iPad premature ending)
-          video.style.display = "block";
-          video.style.opacity = "1";
-          video.muted = true; // Keeps mobile engines happy
-
-          // Ensure background music volume doesn't drop out completely
-          const music = document.getElementById("bg-music");
-          if (music) music.volume = 0.17; 
-
-          // Give the browser 50ms to register the video layout display change
-          setTimeout(() => {
-            video.play()
-              .then(() => {
-                // Once playing, ensure background music is explicitly playing too
-                if (music && music.paused) music.play().catch(() => {});
-              })
-              .catch(err => console.log("Playback engine paused action:", err));
-          }, 50);
-
-          video.addEventListener("ended", () => {
-            video.style.opacity = "0";
-            
-            setTimeout(() => {
-              video.style.display = "none";
-            }, 800);
-
-            showPage("page-end1");
-          }, { once: true });
-
-        }, 800);
-      }, 1700);
-    } // <--- THIS WAS THE MISSING CLOSING BRACKET FOR finishSequence!
     
     const handleResize = () => {
       if (nameElement.textContent.length > 0) movePencil();
@@ -162,7 +160,6 @@ function runWritingSequence(name) {
     window.addEventListener("resize", handleResize);
   }, 3000);
 }
-
 
 // ==========================================================================
 // Section 5 & 6 Asynchronous Data Compilers
@@ -219,13 +216,12 @@ async function initEnd2Page() {
 
     if (!data) return;
 
-    // SECURITY FIX: Replaced .innerHTML loop with safe DOM element parsing
     const archiveList = document.getElementById("archive-list");
-    archiveList.innerHTML = ""; // Clean house safely
+    archiveList.innerHTML = ""; 
 
     data.forEach(record => {
       const row = document.createElement("div");
-      row.textContent = record.name; // Forces exact text rendering, neutralizing <img src> or HTML tags completely
+      row.textContent = record.name; 
       archiveList.appendChild(row);
     });
 
