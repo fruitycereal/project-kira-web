@@ -46,6 +46,23 @@ music.volume = 0.17;
 
 document.addEventListener("click", () => {
   music.play().catch(() => {});
+
+  // Prime the intro video so iOS treats later programmatic play() calls
+  // (fired from nested setTimeouts) as still tied to this user gesture.
+  const introVideo = document.getElementById("intro-video");
+  if (introVideo) {
+    const wasMuted = introVideo.muted;
+    introVideo.muted = true;
+    introVideo.play()
+      .then(() => {
+        introVideo.pause();
+        introVideo.currentTime = 0;
+        introVideo.muted = wasMuted; // restore original state before real playback
+      })
+      .catch(() => {
+        introVideo.muted = wasMuted;
+      });
+  }
 }, { once: true });
 
 // Route Progression: Enter -> Rules Screen (4s delay) -> Entername Panel
