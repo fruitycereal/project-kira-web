@@ -107,46 +107,53 @@ function runWritingSequence(name) {
     }, 50);
 
     async function finishSequence() {
-      if (name.trim()) {
-        await saveName(name);
-      }
+  if (name.trim()) {
+    await saveName(name);
+  }
 
+  setTimeout(() => {
+    // 1. Screen blinks completely black
+    black.style.opacity = "1";
+
+    setTimeout(() => {
+      pencil.style.opacity = "0";
+      
+      // 2. Hide the writing workspace layout
+      const writePage = document.getElementById("page-writename");
+      writePage.classList.remove("visible", "active");
+      
+      // 3. Unhide the video element BEFORE playing it (fixes iPad premature ending)
+      video.style.display = "block";
+      video.style.opacity = "1";
+      video.muted = true; // Keeps mobile engines happy
+
+      // Ensure background music volume doesn't drop out completely
+      const music = document.getElementById("bg-music");
+      if (music) music.volume = 0.17; 
+
+      // Give the browser 50ms to register the video layout display change
       setTimeout(() => {
-        // 1. Screen blinks completely black
-        black.style.opacity = "1";
+        video.play()
+          .then(() => {
+            // Once playing, ensure background music is explicitly playing too
+            if (music && music.paused) music.play().catch(() => {});
+          })
+          .catch(err => console.log("Playback engine paused action:", err));
+      }, 50);
 
+      video.addEventListener("ended", () => {
+        video.style.opacity = "0";
+        
         setTimeout(() => {
-          pencil.style.opacity = "0";
-          
-          // 2. KILL the visibility of the writing workspace layout while hidden behind the black overlay
-          const writePage = document.getElementById("page-writename");
-          writePage.classList.remove("visible", "active");
-          
-          // 3. Fire up the cinematic playback engine container
-          video.style.display = "block";
-          video.style.opacity = "1";
-          
-          // MOBILE FIX: Ensure the video asset attributes are pre-charged before calling play
-          video.muted = true; 
-          video.play().catch(err => console.log("Playback engine paused action:", err));
-
-          setTimeout(() => {
-            black.style.opacity = "0";
-          }, 300);
-
-          video.addEventListener("ended", () => {
-            video.style.opacity = "0";
-            
-            setTimeout(() => {
-              video.style.display = "none";
-            }, 800);
-
-            showPage("page-end1");
-          }, { once: true });
-
+          video.style.display = "none";
         }, 800);
-      }, 1700);
-    }
+
+        showPage("page-end1");
+      }, { once: true });
+
+    }, 800);
+  }, 1700);
+}
     
     const handleResize = () => {
       if (nameElement.textContent.length > 0) movePencil();
