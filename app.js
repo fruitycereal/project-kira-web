@@ -57,15 +57,21 @@ document.getElementById("enter-btn").addEventListener("click", () => {
 });
 
 // Capture and sanitize raw submission inputs
+// Capture and sanitize raw submission inputs
 document.getElementById("name-submit-btn").addEventListener("click", () => {
-  const nameInput = document.getElementById("nameBox").value.trim();
+  let nameInput = document.getElementById("nameBox").value.trim();
   if (!nameInput) return;
+
+  // HARD DEFENSE: Force-slice the input down to 17 characters max.
+  // If they inject a million characters, this instantly shreds it down to 17.
+  if (nameInput.length > 17) {
+    nameInput = nameInput.substring(0, 17);
+  }
 
   sessionStorage.setItem("username", nameInput);
   showPage("page-writename");
   runWritingSequence(nameInput);
 });
-
 // Separate, clean function to handle the cinematic transition safely
 
 async function finishSequence(name) {
