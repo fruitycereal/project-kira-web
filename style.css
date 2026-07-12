@@ -59,6 +59,11 @@ body {
   background: black;
 }
 
+/* Add this class rule right under your #intro-video block */
+#intro-video.active-play {
+  opacity: 1 !important;
+}
+
 #black-screen {
   position: fixed;
   inset: 0;

@@ -67,51 +67,57 @@ document.getElementById("name-submit-btn").addEventListener("click", () => {
 });
 
 // Separate, clean function to handle the cinematic transition safely
+
 async function finishSequence(name) {
+  console.log("finishSequence called");
   const pencil = document.getElementById("pencil");
   const black = document.getElementById("black-screen");
   const video = document.getElementById("intro-video");
 
   if (name.trim()) {
-    await saveName(name);
+    saveName(name).catch(err => console.error("Background save failed:", err));
   }
 
   setTimeout(() => {
-    // 1. Screen blinks completely black
     black.style.opacity = "1";
 
     setTimeout(() => {
       pencil.style.opacity = "0";
-      
-      // 2. Hide the writing workspace layout
+
       const writePage = document.getElementById("page-writename");
       writePage.classList.remove("visible", "active");
-      
-      // 3. Unhide the video element BEFORE playing it (fixes iPad premature ending)
-      video.style.display = "block";
-      video.style.opacity = "1";
-      video.muted = true; // Keeps mobile engines happy
 
-      // Ensure background music volume doesn't drop out completely
+      video.classList.add("active-play");
+      video.currentTime = 0;
+      video.muted = false;
+
       const music = document.getElementById("bg-music");
-      if (music) music.volume = 0.17; 
+      if (music) music.volume = 0.17;
 
-      // Give the browser 50ms to register the video layout display change
       setTimeout(() => {
+        console.log("About to play video");
+
         video.play()
           .then(() => {
-            if (music && music.paused) music.play().catch(() => {});
+            console.log("Video started");
+
+            // Fade the black screen away
+            setTimeout(() => {
+              black.style.opacity = "0";
+            }, 300);
+
+            if (music && music.paused) {
+              music.play().catch(() => {});
+            }
           })
-          .catch(err => console.log("Playback engine paused action:", err));
+          .catch(err => {
+            console.error("Video failed:", err);
+          });
+
       }, 50);
 
       video.addEventListener("ended", () => {
-        video.style.opacity = "0";
-        
-        setTimeout(() => {
-          video.style.display = "none";
-        }, 800);
-
+        video.classList.remove("active-play");
         showPage("page-end1");
       }, { once: true });
 
